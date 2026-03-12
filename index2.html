@@ -6,6 +6,7 @@
 <title>iPhoneClinic – Management System</title>
 
 <style>
+/* VARIABLES DE COLOR */
 :root {
     --primary: #007aff;
     --bg: #f2f2f7;
@@ -16,7 +17,7 @@
     --shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
-/* MODO OSCURO */
+/* CONFIGURACIÓN MODO OSCURO */
 body.dark-mode {
     --bg: #000000;
     --card: #1c1c1e;
@@ -31,7 +32,7 @@ body {
     background-color: var(--bg);
     color: var(--text-main);
     margin: 0;
-    transition: background 0.3s;
+    transition: background 0.3s, color 0.3s;
 }
 
 .app-container {
@@ -53,7 +54,6 @@ header {
 
 h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
 
-/* BUSCADOR */
 .search-input {
     width: 100%;
     padding: 18px 25px;
@@ -78,6 +78,7 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
     font-weight: 500;
     color: var(--text-main);
     cursor: pointer;
+    transition: 0.2s;
 }
 .shortcut-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
@@ -100,7 +101,6 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
     cursor: pointer;
     border: 2px solid transparent;
     box-shadow: var(--shadow);
-    color: var(--text-main);
 }
 .repair-card.active { border-color: var(--primary); background: rgba(0, 114, 243, 0.1); }
 
@@ -108,8 +108,11 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
     background: var(--card);
     border-radius: 24px;
     padding: 35px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    box-shadow: var(--shadow);
+    animation: fadeIn 0.3s ease;
 }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 .price-tag { font-size: 48px; font-weight: 800; color: var(--primary); margin: 20px 0; }
 
@@ -122,27 +125,25 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
     white-space: pre-line;
     border: 1px dashed var(--text-sub);
     color: var(--text-sub);
+    text-align: left;
 }
 
-/* BOTONES */
 .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; }
 .btn { padding: 15px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; }
 .btn-primary { background: var(--primary); color: white; }
 .btn-secondary { background: var(--border); color: var(--text-main); }
 .btn-danger { background: #ff3b30; color: white; }
 
+.admin-section { background: var(--card); margin-top: 40px; padding: 30px; border-radius: 20px; box-shadow: var(--shadow); }
+.admin-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.admin-table td { padding: 12px; border-bottom: 1px solid var(--border); }
+.admin-table input { background: var(--bg); color: var(--text-main); border: 1px solid var(--border); padding: 5px; border-radius: 5px; width: 80px; }
+
 .hidden { display: none; }
 .footer { text-align: center; margin-top: 50px; padding-bottom: 40px; color: var(--text-sub); font-size: 13px; }
-
-/* ADMIN */
-.admin-section { background: var(--card); margin-top: 40px; padding: 30px; border-radius: 20px; box-shadow: var(--shadow); }
-.admin-table { width: 100%; border-collapse: collapse; }
-.admin-table td { padding: 15px 10px; border-bottom: 1px solid var(--border); }
-.admin-table input { background: var(--bg); color: var(--text-main); border: 1px solid var(--border); padding: 5px; border-radius: 5px; }
-
 </style>
 </head>
-<body id="body">
+<body id="mainBody">
 
 <div class="app-container">
     <header>
@@ -150,38 +151,46 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
             <h1>iPhoneClinic</h1>
             <div style="color: var(--text-sub); font-size: 12px;">Cotizador PRO v6</div>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn-secondary" onclick="toggleDarkMode()" style="padding: 8px 12px;">🌙 Modo</button>
+        <div style="display: flex; gap: 8px;">
+            <button class="btn-secondary" onclick="toggleDarkMode()" style="padding: 8px 12px;">🌓 Modo</button>
             <button class="btn-secondary" id="adminAccessBtn" onclick="loginAdmin()" style="padding: 8px 12px;">Admin</button>
         </div>
     </header>
 
     <input type="text" class="search-input" id="mainSearch" placeholder="Busca un modelo o falla...">
 
-    <div class="shortcuts-label">Accesos Directos (Base)</div>
+    <div class="shortcuts-label">Shortcuts Inteligent</div>
     <div class="shortcuts-grid" id="shortcuts"></div>
 
     <select class="custom-select" id="modelSelect"></select>
 
     <div class="repair-options">
-        <div class="repair-card" id="btn-pantalla" onclick="toggleRepair('pantalla')">📱 Pantalla</div>
-        <div class="repair-card" id="btn-bateria" onclick="toggleRepair('bateria')">🔋 Batería</div>
+        <div class="repair-card" id="btn-pantalla" onclick="handleRepairClick('pantalla')">
+            <div style="font-size: 24px;">📱</div>
+            <strong>Pantalla</strong>
+        </div>
+        <div class="repair-card" id="btn-bateria" onclick="handleRepairClick('bateria')">
+            <div style="font-size: 24px;">🔋</div>
+            <strong>Batería</strong>
+        </div>
     </div>
 
     <div id="displayArea"></div>
 
     <div id="adminPanel" class="admin-section hidden">
-        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-            <h2>Panel Admin</h2>
-            <button class="btn-danger" onclick="logoutAdmin()">Cerrar</button>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="margin:0">Panel Administrativo</h2>
+            <button class="btn-danger" style="padding: 8px 15px;" onclick="logoutAdmin()">Cerrar Sesión</button>
         </div>
-        <button class="btn-primary" onclick="addNewModel()">+ Nuevo</button>
-        <button class="btn-secondary" onclick="persistData()">Guardar</button>
+        <div style="margin: 20px 0; display:flex; gap:10px;">
+            <button class="btn-primary" onclick="addNewModel()">+ Agregar</button>
+            <button class="btn-secondary" onclick="persistData()">Guardar Cambios</button>
+        </div>
         <table class="admin-table"><tbody id="adminBody"></tbody></table>
     </div>
 
     <div class="footer">
-        iPhoneClinic &copy; <span id="currentYear"></span> | Sistema Interno
+        iPhoneClinic &copy; <span id="currentYear"></span> | Sistema de Gestión Interna
     </div>
 </div>
 
@@ -210,7 +219,7 @@ const garantia = "Garantía por servicio y falla de fábrica.";
 const saved = localStorage.getItem("clinic_pro_data");
 if(saved) data = JSON.parse(saved);
 
-// SHORTCUTS (SOLO 11 AL 15)
+// SHORTCUTS (SOLO 11, 12, 13, 14, 15)
 function initShortcuts() {
     const container = document.getElementById("shortcuts");
     container.innerHTML = "";
@@ -243,7 +252,8 @@ function selectModel(m, btn) {
     render();
 }
 
-function toggleRepair(type) {
+function handleRepairClick(type) {
+    // Si ya está seleccionado, lo oculta (Toggle)
     if(activeRepair === type) {
         activeRepair = null;
         document.getElementById(`btn-${type}`).classList.remove("active");
@@ -263,32 +273,43 @@ function render() {
     const title = activeRepair === "pantalla" ? "Cambio de Pantalla" : "Cambio de Batería";
     const extra = activeRepair === "bateria" ? "Batería marca Mechanic – Condición 100%" : "Repuesto Calidad Original";
 
+    // Texto para visualización
+    const fullMessage = `${activeModel.toUpperCase()}\n\n${title}\nPrecio: ${formatMoney(price)}\n${extra}\nTiempo: 30-45 min\n${garantia}`;
+
     area.innerHTML = `
         <div class="result-card">
-            <div style="font-weight:700;">${activeModel.toUpperCase()}</div>
+            <div style="font-weight:700; font-size:18px;">${activeModel.toUpperCase()}</div>
             <div style="color:var(--text-sub)">${title}</div>
             <div class="price-tag">${formatMoney(price)}</div>
-            <div class="copy-box" id="copyMsg">${activeModel.toUpperCase()}\n\n${title}\nPrecio: ${formatMoney(price)}\n${extra}\nTiempo: 30-45 min\n${garantia}</div>
+            
+            <div class="copy-box" id="copyMsg">${fullMessage}</div>
+            
             <div class="btn-group">
-                <button class="btn btn-primary" onclick="copyToClipboard()">Copiar</button>
+                <button class="btn btn-primary" onclick="copyToClipboard()">Copiar Respuesta</button>
                 <button class="btn btn-secondary" onclick="openWA()">WhatsApp</button>
             </div>
         </div>
     `;
 }
 
-function formatMoney(n) { return "$" + Number(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+function formatMoney(n) { return "$" + Number(n).toLocaleString('es-CL'); }
 
-// COPIADO SIN ERRORES DE FORMATO
+// COPIADO ORDENADO (Solución al desorden)
 function copyToClipboard() {
     const price = formatMoney(data[activeModel][activeRepair]);
     const title = activeRepair === "pantalla" ? "Cambio de Pantalla" : "Cambio de Batería";
     const extra = activeRepair === "bateria" ? "Batería marca Mechanic – Condición 100%" : "Repuesto Calidad Original";
 
-    // Generamos el texto puro para que no haya errores de espacios al pegar
-    const cleanText = `${activeModel.toUpperCase()}\n\n${title}\nPrecio: ${price}\n${extra}\nTiempo de reparación: 30 a 45 minutos\n${garantia}`;
+    // Se construye la cadena manualmente para asegurar el orden al pegar
+    const textToCopy = 
+        activeModel.toUpperCase() + "\n\n" +
+        title + "\n" +
+        "Precio: " + price + "\n" +
+        extra + "\n" +
+        "Tiempo de reparación: 30 a 45 minutos\n" +
+        garantia;
 
-    navigator.clipboard.writeText(cleanText).then(() => alert("Copiado con éxito"));
+    navigator.clipboard.writeText(textToCopy).then(() => alert("Respuesta copiada satisfactoriamente"));
 }
 
 function openWA() {
@@ -297,36 +318,48 @@ function openWA() {
 }
 
 function toggleDarkMode() {
-    document.getElementById("body").classList.toggle("dark-mode");
+    document.getElementById("mainBody").classList.toggle("dark-mode");
 }
 
 function loginAdmin() {
     if(prompt("Password:") === "admin123") {
         document.getElementById("adminPanel").classList.remove("hidden");
         renderAdmin();
-    }
+    } else { alert("Acceso denegado"); }
 }
 
-function logoutAdmin() { document.getElementById("adminPanel").classList.add("hidden"); }
+function logoutAdmin() {
+    document.getElementById("adminPanel").classList.add("hidden");
+}
 
 function renderAdmin() {
     const body = document.getElementById("adminBody");
     body.innerHTML = "";
     Object.keys(data).forEach(m => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${m}</td>
-            <td><input type="number" value="${data[m].pantalla}" onchange="data['${m}'].pantalla=Number(this.value)"></td>
-            <td><input type="number" value="${data[m].bateria}" onchange="data['${m}'].bateria=Number(this.value)"></td>`;
+        tr.innerHTML = `
+            <td><strong>${m.toUpperCase()}</strong></td>
+            <td>Pantalla: <input type="number" value="${data[m].pantalla}" onchange="data['${m}'].pantalla=Number(this.value)"></td>
+            <td>Batería: <input type="number" value="${data[m].bateria}" onchange="data['${m}'].bateria=Number(this.value)"></td>
+            <td><button class="btn-danger" style="padding:5px 10px" onclick="deleteModel('${m}')">Eliminar</button></td>
+        `;
         body.appendChild(tr);
     });
 }
 
 function addNewModel() {
-    const n = prompt("Modelo:");
+    const n = prompt("Nombre del modelo:");
     if(n) { data[n.toLowerCase()] = {pantalla:0, bateria:0}; renderAdmin(); initSelect(); }
 }
 
-function persistData() { localStorage.setItem("clinic_pro_data", JSON.stringify(data)); alert("Guardado."); }
+function deleteModel(m) {
+    if(confirm("¿Eliminar " + m + "?")) { delete data[m]; renderAdmin(); initSelect(); }
+}
+
+function persistData() { 
+    localStorage.setItem("clinic_pro_data", JSON.stringify(data)); 
+    alert("Datos actualizados localmente."); 
+}
 
 document.getElementById("mainSearch").addEventListener("input", (e) => {
     const val = e.target.value.toLowerCase();
