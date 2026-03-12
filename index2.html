@@ -8,14 +8,22 @@
 <style>
 :root {
     --primary: #007aff;
-    --primary-dark: #0056b3;
     --bg: #f2f2f7;
     --card: #ffffff;
     --text-main: #1c1c1e;
     --text-sub: #8e8e93;
-    --danger: #ff3b30;
-    --success: #34c759;
+    --border: #e5e5ea;
     --shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* MODO OSCURO */
+body.dark-mode {
+    --bg: #000000;
+    --card: #1c1c1e;
+    --text-main: #ffffff;
+    --text-sub: #8e8e93;
+    --border: #38383a;
+    --shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 body {
@@ -23,7 +31,7 @@ body {
     background-color: var(--bg);
     color: var(--text-main);
     margin: 0;
-    padding: 0;
+    transition: background 0.3s;
 }
 
 .app-container {
@@ -33,7 +41,7 @@ body {
 }
 
 header {
-    background: white;
+    background: var(--card);
     padding: 25px;
     border-radius: 20px;
     box-shadow: var(--shadow);
@@ -44,32 +52,32 @@ header {
 }
 
 h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
-.badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 8px; font-size: 12px; vertical-align: middle; }
 
-.search-wrapper { position: relative; margin-bottom: 25px; }
+/* BUSCADOR */
 .search-input {
     width: 100%;
     padding: 18px 25px;
     border-radius: 15px;
-    border: 2px solid transparent;
-    background: white;
+    border: 1px solid var(--border);
+    background: var(--card);
     box-shadow: var(--shadow);
     font-size: 18px;
-    transition: 0.3s;
+    color: var(--text-main);
     box-sizing: border-box;
+    margin-bottom: 25px;
 }
-.search-input:focus { border-color: var(--primary); outline: none; }
 
 .shortcuts-label { font-size: 13px; color: var(--text-sub); margin-bottom: 10px; font-weight: 600; text-transform: uppercase; }
 .shortcuts-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px; }
+
 .shortcut-btn {
-    background: white;
-    border: 1px solid #e5e5ea;
+    background: var(--card);
+    border: 1px solid var(--border);
     padding: 10px 18px;
     border-radius: 12px;
     font-weight: 500;
+    color: var(--text-main);
     cursor: pointer;
-    transition: 0.2s;
 }
 .shortcut-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
@@ -77,132 +85,103 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
     width: 100%;
     padding: 12px;
     border-radius: 12px;
-    border: 1px solid #d1d1d6;
+    border: 1px solid var(--border);
     margin-bottom: 25px;
-    background: white;
+    background: var(--card);
+    color: var(--text-main);
 }
 
 .repair-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
 .repair-card {
-    background: white;
+    background: var(--card);
     padding: 20px;
     border-radius: 18px;
     text-align: center;
     cursor: pointer;
     border: 2px solid transparent;
     box-shadow: var(--shadow);
-    transition: 0.3s;
+    color: var(--text-main);
 }
-.repair-card.active { border-color: var(--primary); background: #f0f7ff; }
+.repair-card.active { border-color: var(--primary); background: rgba(0, 114, 243, 0.1); }
 
 .result-card {
-    background: white;
+    background: var(--card);
     border-radius: 24px;
     padding: 35px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-    animation: slideUp 0.4s ease;
 }
-@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
 .price-tag { font-size: 48px; font-weight: 800; color: var(--primary); margin: 20px 0; }
-.info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f2f2f7; }
-.info-label { color: var(--text-sub); }
 
-/* CUADRO DE TEXTO PARA COPIAR (RESTAURADO) */
 .copy-box {
     margin-top: 25px;
-    background: #f9f9fb;
+    background: rgba(0,0,0,0.03);
     padding: 15px;
     border-radius: 12px;
     font-size: 14px;
     white-space: pre-line;
-    border: 1px dashed var(--primary);
-    color: #444;
+    border: 1px dashed var(--text-sub);
+    color: var(--text-sub);
 }
 
+/* BOTONES */
 .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; }
-.btn {
-    padding: 15px;
-    border-radius: 12px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-}
+.btn { padding: 15px; border-radius: 12px; border: none; font-weight: 600; cursor: pointer; }
 .btn-primary { background: var(--primary); color: white; }
-.btn-secondary { background: #e5e5ea; color: var(--text-main); }
-.btn-danger { background: var(--danger); color: white; }
-
-.admin-section {
-    background: white;
-    margin-top: 40px;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: var(--shadow);
-}
-.admin-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-.admin-table th { text-align: left; color: var(--text-sub); padding: 10px; }
-.admin-table td { padding: 15px 10px; border-bottom: 1px solid #f2f2f7; }
-.admin-table input { width: 100px; padding: 8px; border-radius: 6px; border: 1px solid #ddd; }
+.btn-secondary { background: var(--border); color: var(--text-main); }
+.btn-danger { background: #ff3b30; color: white; }
 
 .hidden { display: none; }
 .footer { text-align: center; margin-top: 50px; padding-bottom: 40px; color: var(--text-sub); font-size: 13px; }
+
+/* ADMIN */
+.admin-section { background: var(--card); margin-top: 40px; padding: 30px; border-radius: 20px; box-shadow: var(--shadow); }
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table td { padding: 15px 10px; border-bottom: 1px solid var(--border); }
+.admin-table input { background: var(--bg); color: var(--text-main); border: 1px solid var(--border); padding: 5px; border-radius: 5px; }
+
 </style>
 </head>
-<body>
+<body id="body">
 
 <div class="app-container">
     <header>
         <div>
-            <h1>iPhoneClinic <span class="badge">PRO</span></h1>
-            <div style="color: var(--text-sub); font-size: 13px;">Sistema de Cotización Central</div>
+            <h1>iPhoneClinic</h1>
+            <div style="color: var(--text-sub); font-size: 12px;">Cotizador PRO v6</div>
         </div>
-        <div id="headerActions">
-            <button class="btn-secondary" id="adminAccessBtn" onclick="loginAdmin()">Admin</button>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-secondary" onclick="toggleDarkMode()" style="padding: 8px 12px;">🌙 Modo</button>
+            <button class="btn-secondary" id="adminAccessBtn" onclick="loginAdmin()" style="padding: 8px 12px;">Admin</button>
         </div>
     </header>
 
-    <div class="search-wrapper">
-        <input type="text" class="search-input" id="mainSearch" placeholder="Busca un modelo o falla...">
-    </div>
+    <input type="text" class="search-input" id="mainSearch" placeholder="Busca un modelo o falla...">
 
-    <div class="shortcuts-label">Accesos Directos</div>
+    <div class="shortcuts-label">Accesos Directos (Base)</div>
     <div class="shortcuts-grid" id="shortcuts"></div>
 
     <select class="custom-select" id="modelSelect"></select>
 
     <div class="repair-options">
-        <div class="repair-card" id="btn-pantalla" onclick="toggleRepair('pantalla')">
-            <div style="font-size: 20px; margin-bottom: 5px;">📱</div>
-            <strong>Pantalla</strong>
-        </div>
-        <div class="repair-card" id="btn-bateria" onclick="toggleRepair('bateria')">
-            <div style="font-size: 20px; margin-bottom: 5px;">🔋</div>
-            <strong>Batería</strong>
-        </div>
+        <div class="repair-card" id="btn-pantalla" onclick="toggleRepair('pantalla')">📱 Pantalla</div>
+        <div class="repair-card" id="btn-bateria" onclick="toggleRepair('bateria')">🔋 Batería</div>
     </div>
 
     <div id="displayArea"></div>
 
     <div id="adminPanel" class="admin-section hidden">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2 style="margin:0">Panel de Control</h2>
-            <button class="btn-danger" style="padding: 8px 15px;" onclick="logoutAdmin()">Cerrar Sesión</button>
+        <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+            <h2>Panel Admin</h2>
+            <button class="btn-danger" onclick="logoutAdmin()">Cerrar</button>
         </div>
-        <div style="margin-bottom: 20px; display:flex; gap:10px;">
-            <button class="btn-primary" onclick="addNewModel()">+ Nuevo Modelo</button>
-            <button class="btn-secondary" onclick="persistData()">Guardar Cambios</button>
-        </div>
-        <table class="admin-table">
-            <thead>
-                <tr><th>Modelo</th><th>Pantalla</th><th>Batería</th><th></th></tr>
-            </thead>
-            <tbody id="adminBody"></tbody>
-        </table>
+        <button class="btn-primary" onclick="addNewModel()">+ Nuevo</button>
+        <button class="btn-secondary" onclick="persistData()">Guardar</button>
+        <table class="admin-table"><tbody id="adminBody"></tbody></table>
     </div>
 
     <div class="footer">
-        iPhoneClinic &copy; <span id="currentYear"></span> | Todos los derechos reservados.
+        iPhoneClinic &copy; <span id="currentYear"></span> | Sistema Interno
     </div>
 </div>
 
@@ -231,25 +210,24 @@ const garantia = "Garantía por servicio y falla de fábrica.";
 const saved = localStorage.getItem("clinic_pro_data");
 if(saved) data = JSON.parse(saved);
 
-// SHORTCUTS FILTRADOS (Solo 11 al 15)
+// SHORTCUTS (SOLO 11 AL 15)
 function initShortcuts() {
     const container = document.getElementById("shortcuts");
     container.innerHTML = "";
-    Object.keys(data).forEach(m => {
-        if(m.match(/iphone 11|iphone 12|iphone 13|iphone 14|iphone 15/i)) {
-            const btn = document.createElement("button");
-            btn.className = "shortcut-btn";
-            btn.textContent = m.toUpperCase();
-            btn.onclick = () => selectModel(m, btn);
-            container.appendChild(btn);
-        }
+    const list = ["iphone 11", "iphone 12", "iphone 13", "iphone 14", "iphone 15"];
+    list.forEach(m => {
+        const btn = document.createElement("button");
+        btn.className = "shortcut-btn";
+        btn.textContent = m.replace("iphone ", "").toUpperCase();
+        btn.onclick = () => selectModel(m, btn);
+        container.appendChild(btn);
     });
 }
 
 function initSelect() {
     const sel = document.getElementById("modelSelect");
-    sel.innerHTML = '<option value="">Ver todos los modelos...</option>';
-    Object.keys(data).forEach(m => {
+    sel.innerHTML = '<option value="">Todos los modelos...</option>';
+    Object.keys(data).sort().forEach(m => {
         const opt = document.createElement("option");
         opt.value = m;
         opt.textContent = m.toUpperCase();
@@ -257,12 +235,12 @@ function initSelect() {
     });
 }
 
-function selectModel(m, btnElement) {
+function selectModel(m, btn) {
     activeModel = m;
     document.querySelectorAll(".shortcut-btn").forEach(b => b.classList.remove("active"));
-    if(btnElement) btnElement.classList.add("active");
+    if(btn) btn.classList.add("active");
     document.getElementById("modelSelect").value = m;
-    renderResult();
+    render();
 }
 
 function toggleRepair(type) {
@@ -274,48 +252,43 @@ function toggleRepair(type) {
         document.querySelectorAll(".repair-card").forEach(c => c.classList.remove("active"));
         document.getElementById(`btn-${type}`).classList.add("active");
     }
-    renderResult();
+    render();
 }
 
-function renderResult() {
+function render() {
     const area = document.getElementById("displayArea");
-    if(!activeModel || !activeRepair) {
-        area.innerHTML = "";
-        return;
-    }
+    if(!activeModel || !activeRepair) { area.innerHTML = ""; return; }
 
     const price = data[activeModel][activeRepair];
     const title = activeRepair === "pantalla" ? "Cambio de Pantalla" : "Cambio de Batería";
     const extra = activeRepair === "bateria" ? "Batería marca Mechanic – Condición 100%" : "Repuesto Calidad Original";
 
-    // FORMATO DE COPIADO RESTAURADO
-    const fullMessage = `${activeModel.toUpperCase()}\n\n${title}\nPrecio: ${formatMoney(price)}\n${extra}\nTiempo de reparación: 30 a 45 minutos\n${garantia}`;
-
     area.innerHTML = `
         <div class="result-card">
-            <div style="font-weight: 700; font-size: 20px;">${activeModel.toUpperCase()}</div>
-            <div style="color: var(--text-sub)">${title}</div>
+            <div style="font-weight:700;">${activeModel.toUpperCase()}</div>
+            <div style="color:var(--text-sub)">${title}</div>
             <div class="price-tag">${formatMoney(price)}</div>
-            <div class="info-row"><span class="info-label">Tiempo</span><span>30 - 45 min</span></div>
-            <div class="info-row"><span class="info-label">Garantía</span><span>${garantia}</span></div>
-            
-            <div class="copy-box" id="copyMsg">${fullMessage}</div>
-            
+            <div class="copy-box" id="copyMsg">${activeModel.toUpperCase()}\n\n${title}\nPrecio: ${formatMoney(price)}\n${extra}\nTiempo: 30-45 min\n${garantia}</div>
             <div class="btn-group">
-                <button class="btn btn-primary" onclick="copyToClipboard()">Copiar Respuesta</button>
+                <button class="btn btn-primary" onclick="copyToClipboard()">Copiar</button>
                 <button class="btn btn-secondary" onclick="openWA()">WhatsApp</button>
             </div>
         </div>
     `;
 }
 
-function formatMoney(n) {
-    return "$" + Number(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
-}
+function formatMoney(n) { return "$" + Number(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
 
+// COPIADO SIN ERRORES DE FORMATO
 function copyToClipboard() {
-    const text = document.getElementById("copyMsg").innerText;
-    navigator.clipboard.writeText(text).then(() => alert("Copiado con éxito"));
+    const price = formatMoney(data[activeModel][activeRepair]);
+    const title = activeRepair === "pantalla" ? "Cambio de Pantalla" : "Cambio de Batería";
+    const extra = activeRepair === "bateria" ? "Batería marca Mechanic – Condición 100%" : "Repuesto Calidad Original";
+
+    // Generamos el texto puro para que no haya errores de espacios al pegar
+    const cleanText = `${activeModel.toUpperCase()}\n\n${title}\nPrecio: ${price}\n${extra}\nTiempo de reparación: 30 a 45 minutos\n${garantia}`;
+
+    navigator.clipboard.writeText(cleanText).then(() => alert("Copiado con éxito"));
 }
 
 function openWA() {
@@ -323,67 +296,44 @@ function openWA() {
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
 }
 
+function toggleDarkMode() {
+    document.getElementById("body").classList.toggle("dark-mode");
+}
+
 function loginAdmin() {
-    const p = prompt("Password:");
-    if(p === "admin123") {
+    if(prompt("Password:") === "admin123") {
         document.getElementById("adminPanel").classList.remove("hidden");
-        document.getElementById("adminAccessBtn").classList.add("hidden");
-        renderAdminTable();
+        renderAdmin();
     }
 }
 
-function logoutAdmin() {
-    document.getElementById("adminPanel").classList.add("hidden");
-    document.getElementById("adminAccessBtn").classList.remove("hidden");
-}
+function logoutAdmin() { document.getElementById("adminPanel").classList.add("hidden"); }
 
-function renderAdminTable() {
+function renderAdmin() {
     const body = document.getElementById("adminBody");
     body.innerHTML = "";
     Object.keys(data).forEach(m => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${m}</td>
+        tr.innerHTML = `<td>${m}</td>
             <td><input type="number" value="${data[m].pantalla}" onchange="data['${m}'].pantalla=Number(this.value)"></td>
-            <td><input type="number" value="${data[m].bateria}" onchange="data['${m}'].bateria=Number(this.value)"></td>
-            <td><button class="btn-danger" style="padding:5px" onclick="deleteM('${m}')">X</button></td>
-        `;
+            <td><input type="number" value="${data[m].bateria}" onchange="data['${m}'].bateria=Number(this.value)"></td>`;
         body.appendChild(tr);
     });
 }
 
 function addNewModel() {
-    const n = prompt("Nombre del modelo:");
-    if(n && !data[n]) {
-        data[n.toLowerCase()] = {pantalla: 0, bateria: 0};
-        renderAdminTable();
-        initShortcuts();
-        initSelect();
-    }
+    const n = prompt("Modelo:");
+    if(n) { data[n.toLowerCase()] = {pantalla:0, bateria:0}; renderAdmin(); initSelect(); }
 }
 
-function deleteM(m) {
-    if(confirm("¿Eliminar?")) {
-        delete data[m];
-        renderAdminTable();
-        initShortcuts();
-        initSelect();
-    }
-}
-
-function persistData() {
-    localStorage.setItem("clinic_pro_data", JSON.stringify(data));
-    alert("Cambios guardados.");
-}
+function persistData() { localStorage.setItem("clinic_pro_data", JSON.stringify(data)); alert("Guardado."); }
 
 document.getElementById("mainSearch").addEventListener("input", (e) => {
     const val = e.target.value.toLowerCase();
-    Object.keys(data).forEach(m => {
-        if(val.includes(m.replace("iphone ",""))) activeModel = m;
-    });
+    Object.keys(data).forEach(m => { if(val.includes(m.replace("iphone ",""))) activeModel = m; });
     if(val.includes("panta")) activeRepair = "pantalla";
     if(val.includes("bat")) activeRepair = "bateria";
-    renderResult();
+    render();
 });
 
 document.getElementById("modelSelect").onchange = (e) => selectModel(e.target.value);
