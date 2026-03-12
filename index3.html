@@ -159,15 +159,6 @@ let data={
 "iphone 15 plus":{pantalla:150000,bateria:58000},
 "iphone 15 pro":{pantalla:180000,bateria:60000},
 "iphone 15 pro max":{pantalla:190000,bateria:60000}
-},
-"iphone 8":{pantalla:38000,bateria:25000},
-"iphone x":{pantalla:55000,bateria:30000},
-"iphone xr":{pantalla:60000,bateria:32000},
-"iphone 11":{pantalla:70000,bateria:40000},
-"iphone 12":{pantalla:95000,bateria:45000},
-"iphone 13":{pantalla:85000,bateria:45000},
-"iphone 14":{pantalla:110000,bateria:50000},
-"iphone 15":{pantalla:140000,bateria:55000}
 }
 
 const garantia="Garantía por servicio y falla de fábrica."
@@ -197,145 +188,6 @@ function showModel(model){
 function loadButtons(){
  buttons.innerHTML=""
  Object.keys(data).forEach(model=>{
- const b=document.createElement("button")
- b.className="modelBtn"
- b.textContent=model.toUpperCase()
- b.onclick=()=>{setActiveModel(b);showModel(model)}
- buttons.appendChild(b)
- })
-}
-
-/* SELECT */
-function loadSelect(){
- select.innerHTML='<option value="">Seleccionar modelo...</option>'
- Object.keys(data).forEach(model=>{
- const o=document.createElement("option")
- o.value=model
- o.textContent=model.toUpperCase()
- select.appendChild(o)
- })
-}
-
-select.addEventListener("change",()=>{
- selectedModel=select.value
- update()
-})
-
-/* BUSQUEDA */
-const search=document.getElementById("search")
-
-search.addEventListener("input",()=>{
- const q=search.value.toLowerCase()
- Object.keys(data).forEach(model=>{
- if(q.includes(model.replace("iphone ",""))) selectedModel=model
- })
- if(q.includes("pantalla")) setRepair("pantalla")
- if(q.includes("bateria")) setRepair("bateria")
- update()
-})
-
-/* SERVICIO */
-function setRepair(type){
-
- if(selectedRepair===type){
- selectedRepair=null
- clearRepairButtons()
- results.innerHTML=""
- return
- }
-
- selectedRepair=type
- clearRepairButtons()
-
- const btn=document.querySelector('[data-type="'+type+'"]')
- if(btn)btn.classList.add("active")
-
- update()
-
-}
-
-function clearRepairButtons(){
- document.querySelectorAll(".repairBtn").forEach(b=>b.classList.remove("active"))
-}
-
-/* UPDATE */
-function update(){
-
- if(!selectedModel||!selectedRepair)return
-
- const price=data[selectedModel][selectedRepair]
-
- let titulo=""
- let extra=""
-
- if(selectedRepair==="pantalla"){
- titulo="Cambio de Pantalla"
- }
-
- if(selectedRepair==="bateria"){
- titulo="Cambio de Batería"
- extra="Batería marca Mechanic – Condición 100%"
- }
-
- const mensaje=selectedModel.toUpperCase()+"
-
-"+titulo+"
-Precio: "+format(price)+"
-"+(extra?extra+"
-":"")+"Tiempo de reparación: 30 a 45 minutos
-"+garantia
-
- results.innerHTML=
- '<div class="card">'+
- '<h2>'+selectedModel.toUpperCase()+'</h2>'+
- '<div>'+titulo+'</div>'+
- '<div class="price">'+format(price)+'</div>'+
- '<div>'+extra+'</div>'+
- '<div class="row">'+
- '<div class="label">Garantía</div>'+
- '<div>'+garantia+'</div>'+
- '</div>'+
- '<div class="copyBox" id="msg">'+mensaje+'</div>'+
- '<div class="actions">'+
- '<button class="primary" onclick="copyMsg()">Copiar respuesta</button>'+
- '<button class="secondary" onclick="sendWhats()">Enviar WhatsApp</button>'+
- '</div>'+
- '</div>'
-}
-
-/* COPY */
-function copyMsg(){
- const text=document.getElementById("msg").innerText
- navigator.clipboard.writeText(text)
- alert("Mensaje copiado")
-}
-
-function sendWhats(){
- const text=document.getElementById("msg").innerText
- const url="https://wa.me/?text="+encodeURIComponent(text)
- window.open(url,'_blank')
-}
-
-/* ADMIN */
-function toggleAdminLogin(){
- const pass=prompt("Contraseña admin")
- if(pass!=="admin123"){
- alert("Incorrecto")
- return
- }
- admin=!admin
- const panel=document.getElementById("adminPanel")
- if(admin){panel.classList.remove("hidden");loadAdminTable();renderAdminButtons()}
- else{panel.classList.add("hidden");renderAdminButtons()}
-}
-
-function loadAdminTable(){
-
- const tbody=document.querySelector("#adminTable tbody")
-
- tbody.innerHTML=""
-
- Object.keys(data).forEach(model=>{
 
  const tr=document.createElement("tr")
 
@@ -345,7 +197,8 @@ function loadAdminTable(){
  '<td><button class="danger deleteBtn" data-model="'+model+'">X</button></td>'
 
  tbody.appendChild(tr)
- }
+
+})
 
  document.querySelectorAll('.deleteBtn').forEach(btn=>{
   btn.addEventListener('click',e=>{
@@ -355,8 +208,8 @@ function loadAdminTable(){
  })
  }
 
- document.querySelectorAll('.adminInput').forEach(inp=>{
-  inp.addEventListener('change',e=>{
+ document.querySelectorAll('.adminInput').forEach(inp=>
+  inp.addEventListener('change',e=>
    const m=e.target.dataset.model
    const f=e.target.dataset.field
    data[m][f]=Number(e.target.value)
