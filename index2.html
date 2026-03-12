@@ -1,322 +1,438 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPhoneClinic – v6 PRO</title>
-    <style>
-        :root {
-            --bg: #f5f5f7;
-            --card: #ffffff;
-            --text: #1d1d1f;
-            --sub: #6e6e73;
-            --border: #d2d2d7;
-            --accent: #0071e3;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iPhoneClinic – v6 PRO</title>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: var(--bg);
-            margin: 0;
-            color: var(--text);
-            line-height: 1.5;
-        }
+<style>
+:root{
+--bg:#f5f5f7;
+--card:#ffffff;
+--text:#1d1d1f;
+--sub:#6e6e73;
+--border:#d2d2d7;
+--accent:#0071e3;
+}
 
-        .container { max-width: 900px; margin: auto; padding: 40px 20px; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        h1 { margin: 0; font-size: 28px; font-weight: 600; }
-        .subtitle { color: var(--sub); font-size: 14px; }
+body{
+font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+background:var(--bg);
+margin:0;
+color:var(--text);
+}
 
-        button { cursor: pointer; border: none; padding: 10px 16px; border-radius: 10px; font-size: 14px; transition: 0.2s; }
-        .primary { background: var(--accent); color: white; }
-        .primary:hover { background: #0077ed; }
-        .secondary { background: #e5e5ea; color: #1d1d1f; }
-        .danger { background: #ff3b30; color: white; }
+.container{max-width:1100px;margin:auto;padding:40px 20px}
 
-        .search { width: 100%; padding: 16px; font-size: 18px; border-radius: 12px; border: 1px solid var(--border); margin: 20px 0; box-sizing: border-box; }
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
 
-        .models { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
-        .modelBtn { background: var(--card); border: 1px solid var(--border); padding: 8px 12px; border-radius: 8px; font-size: 12px; }
-        .modelBtn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+h1{margin:0;font-size:32px}
+.subtitle{color:var(--sub)}
 
-        .modelSelect { width: 100%; margin-bottom: 20px; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: white; }
+button{cursor:pointer;border:none;padding:10px 16px;border-radius:10px;font-size:14px}
+.primary{background:var(--accent);color:white}
+.secondary{background:#e5e5ea}
+.danger{background:#ff3b30;color:white}
 
-        .repairs { display: flex; gap: 10px; margin-bottom: 25px; }
-        .repairBtn { flex: 1; background: #efeff1; border: 2px solid transparent; padding: 12px; font-weight: 500; }
-        .repairBtn.active { border-color: var(--accent); background: #e8f2ff; color: var(--accent); }
+.search{width:100%;padding:18px;font-size:20px;border-radius:14px;border:1px solid var(--border);margin:20px 0; box-sizing: border-box;}
 
-        .card { background: var(--card); border-radius: 18px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.models{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px}
+.modelBtn{background:var(--card);border:1px solid var(--border);padding:8px 12px;border-radius:10px;font-size:13px}
+.modelBtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-        .price { font-size: 42px; font-weight: 700; margin: 15px 0; color: var(--accent); }
-        .row { display: flex; justify-content: space-between; margin: 10px 0; border-bottom: 1px solid #f0f0f2; padding-bottom: 5px; }
-        .label { color: var(--sub); font-weight: 500; }
+.modelSelect{margin-bottom:20px;padding:10px;border-radius:10px;border:1px solid var(--border); width: 100%;}
 
-        .copyBox { margin-top: 20px; background: #f9f9fb; padding: 15px; border-radius: 10px; font-size: 13px; white-space: pre-line; border: 1px dashed var(--border); color: #444; }
-        .actions { margin-top: 20px; display: flex; gap: 10px; }
+.repairs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:25px}
+.repairBtn{background:#efeff1;border:none;padding:8px 12px;border-radius:10px;font-size:13px}
+.repairBtn.active{background:var(--accent);color:white}
 
-        .adminPanel { margin-top: 40px; background: white; padding: 25px; border-radius: 18px; border: 1px solid var(--border); }
-        .table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
-        .table th, .table td { border-bottom: 1px solid #eee; padding: 12px; text-align: left; }
-        .table input { width: 80px; padding: 5px; border: 1px solid var(--border); border-radius: 4px; }
+.card{background:var(--card);border-radius:18px;padding:24px;box-shadow:0 6px 25px rgba(0,0,0,0.08)}
 
-        .hidden { display: none; }
-    </style>
+.price{font-size:46px;font-weight:700;margin:10px 0}
+
+.row{display:flex;justify-content:space-between;margin:6px 0}
+.label{color:var(--sub)}
+
+.copyBox{margin-top:20px;background:rgba(0,0,0,0.05);padding:15px;border-radius:10px;font-size:14px;white-space:pre-line}
+
+.actions{margin-top:15px;display:flex;gap:10px}
+
+.footer{margin-top:40px;color:var(--sub);font-size:14px; text-align: center;}
+
+.adminPanel{margin-top:40px;background:white;padding:25px;border-radius:18px;box-shadow:0 6px 25px rgba(0,0,0,0.08)}
+
+.table{width:100%;border-collapse:collapse;margin-top:15px}
+.table th,.table td{border-bottom:1px solid #eee;padding:10px;text-align:left}
+.table input{width:90px;padding:6px}
+
+.hidden{display:none}
+
+</style>
 </head>
+
 <body>
 
 <div class="container">
-    <header>
-        <div>
-            <h1>iPhoneClinic</h1>
-            <div class="subtitle">Cotizador PRO v6</div>
-        </div>
-        <div id="headerButtons">
-            <button class="secondary" onclick="toggleAdminLogin()">Panel Admin</button>
-        </div>
-    </header>
 
-    <input class="search" id="search" placeholder="Buscar modelo o reparación... (ej: 13 pro pantalla)">
+<header>
+<div>
+<h1>iPhoneClinic</h1>
+<div class="subtitle">Cotizador PRO</div>
+</div>
 
-    <div class="models" id="modelButtons"></div>
+<div id="headerButtons">
+<button class="secondary" id="adminBtn" onclick="toggleAdminLogin()">Panel Admin</button>
+</div>
+</header>
 
-    <select class="modelSelect" id="modelSelect"></select>
+<input class="search" id="search" placeholder="Ej: 13 pro pantalla">
 
-    <div class="repairs">
-        <button class="repairBtn" data-type="pantalla" onclick="setRepair('pantalla')">Pantalla</button>
-        <button class="repairBtn" data-type="bateria" onclick="setRepair('bateria')">Batería</button>
-    </div>
+<div class="models" id="modelButtons"></div>
 
-    <div id="results"></div>
+<select class="modelSelect" id="modelSelect"></select>
 
-    <div id="adminPanel" class="adminPanel hidden">
-        <h2>Panel de Administración</h2>
-        <div style="margin-bottom:15px; display:flex; gap:10px;">
-            <button class="primary" onclick="addModel()">+ Agregar modelo</button>
-            <button class="secondary" onclick="saveData()">Guardar en Memoria</button>
-        </div>
-        <table class="table" id="adminTable">
-            <thead>
-                <tr>
-                    <th>Modelo</th>
-                    <th>Pantalla ($)</th>
-                    <th>Batería ($)</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
+<div class="repairs">
+<button class="repairBtn" data-type="pantalla" onclick="setRepair('pantalla')">Pantalla</button>
+<button class="repairBtn" data-type="bateria" onclick="setRepair('bateria')">Batería</button>
+</div>
 
-    <div class="footer" style="text-align:center; padding: 40px 0; color: #999; font-size: 12px;">
-        iPhoneClinic &copy; 2024 - Sistema de Gestión Interna
-    </div>
+<div id="results"></div>
+
+<div id="adminPanel" class="adminPanel hidden">
+<div style="display:flex; justify-content: space-between; align-items: center;">
+    <h2>Panel de Administración</h2>
+    <button class="danger" onclick="logoutAdmin()">Cerrar Sesión</button>
+</div>
+
+<div style="margin-bottom:15px">
+<button class="primary" onclick="addModel()">Agregar modelo</button>
+<button class="secondary" onclick="saveData()">Guardar cambios</button>
+</div>
+
+<table class="table" id="adminTable">
+<thead>
+<tr>
+<th>Modelo</th>
+<th>Pantalla</th>
+<th>Batería</th>
+<th></th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+
+<div class="footer">Sistema interno iPhoneClinic © <span id="year"></span></div>
+
 </div>
 
 <script>
-let selectedRepair = null;
-let selectedModel = null;
-let admin = false;
-let statsData = {};
 
-// Objeto unificado y corregido
-let data = {
-    "iphone 7": {pantalla:35000, bateria:25000},
-    "iphone 7 plus": {pantalla:38000, bateria:25000},
-    "iphone 8": {pantalla:38000, bateria:25000},
-    "iphone 8 plus": {pantalla:42000, bateria:27000},
-    "iphone x": {pantalla:55000, bateria:30000},
-    "iphone xs": {pantalla:60000, bateria:32000},
-    "iphone xs max": {pantalla:65000, bateria:35000},
-    "iphone xr": {pantalla:60000, bateria:32000},
-    "iphone 11": {pantalla:70000, bateria:40000},
-    "iphone 11 pro": {pantalla:90000, bateria:42000},
-    "iphone 11 pro max": {pantalla:95000, bateria:42000},
-    "iphone 12": {pantalla:95000, bateria:45000},
-    "iphone 12 mini": {pantalla:95000, bateria:45000},
-    "iphone 12 pro": {pantalla:110000, bateria:45000},
-    "iphone 12 pro max": {pantalla:120000, bateria:48000},
-    "iphone 13": {pantalla:85000, bateria:45000},
-    "iphone 13 mini": {pantalla:85000, bateria:45000},
-    "iphone 13 pro": {pantalla:120000, bateria:50000},
-    "iphone 13 pro max": {pantalla:130000, bateria:50000},
-    "iphone 14": {pantalla:110000, bateria:50000},
-    "iphone 14 plus": {pantalla:120000, bateria:52000},
-    "iphone 14 pro": {pantalla:150000, bateria:55000},
-    "iphone 14 pro max": {pantalla:160000, bateria:55000},
-    "iphone 15": {pantalla:140000, bateria:55000},
-    "iphone 15 plus": {pantalla:150000, bateria:58000},
-    "iphone 15 pro": {pantalla:180000, bateria:60000},
-    "iphone 15 pro max": {pantalla:190000, bateria:60000}
+let selectedRepair=null
+let selectedModel=null
+let admin=false
+
+let data={
+"iphone 7":{pantalla:35000,bateria:25000},
+"iphone 7 plus":{pantalla:38000,bateria:25000},
+"iphone 8":{pantalla:38000,bateria:25000},
+"iphone 8 plus":{pantalla:42000,bateria:27000},
+"iphone x":{pantalla:55000,bateria:30000},
+"iphone xs":{pantalla:60000,bateria:32000},
+"iphone xs max":{pantalla:65000,bateria:35000},
+"iphone xr":{pantalla:60000,bateria:32000},
+"iphone 11":{pantalla:70000,bateria:40000},
+"iphone 11 pro":{pantalla:90000,bateria:42000},
+"iphone 11 pro max":{pantalla:95000,bateria:42000},
+"iphone 12":{pantalla:95000,bateria:45000},
+"iphone 12 mini":{pantalla:95000,bateria:45000},
+"iphone 12 pro":{pantalla:110000,bateria:45000},
+"iphone 12 pro max":{pantalla:120000,bateria:48000},
+"iphone 13":{pantalla:85000,bateria:45000},
+"iphone 13 mini":{pantalla:85000,bateria:45000},
+"iphone 13 pro":{pantalla:120000,bateria:50000},
+"iphone 13 pro max":{pantalla:130000,bateria:50000},
+"iphone 14":{pantalla:110000,bateria:50000},
+"iphone 14 plus":{pantalla:120000,bateria:52000},
+"iphone 14 pro":{pantalla:150000,bateria:55000},
+"iphone 14 pro max":{pantalla:160000,bateria:55000},
+"iphone 15":{pantalla:140000,bateria:55000},
+"iphone 15 plus":{pantalla:150000,bateria:58000},
+"iphone 15 pro":{pantalla:180000,bateria:60000},
+"iphone 15 pro max":{pantalla:190000,bateria:60000}
 };
 
-const garantia = "Garantía por servicio y falla de fábrica.";
-const buttonsContainer = document.getElementById("modelButtons");
-const selectElement = document.getElementById("modelSelect");
-const resultsContainer = document.getElementById("results");
+const garantia="Garantía por servicio y falla de fábrica."
 
-// Cargar datos de LocalStorage
-const saved = localStorage.getItem("iphoneclinic_data");
-if(saved) { data = JSON.parse(saved); }
+const buttons=document.getElementById("modelButtons")
+const select=document.getElementById("modelSelect")
+const results=document.getElementById("results")
 
-function loadButtons() {
-    buttonsContainer.innerHTML = "";
-    Object.keys(data).forEach(model => {
-        const b = document.createElement("button");
-        b.className = "modelBtn";
-        b.textContent = model.toUpperCase();
-        b.onclick = () => {
-            selectedModel = model;
-            selectElement.value = model;
-            updateUI();
-        };
-        buttonsContainer.appendChild(b);
-    });
+/* STORAGE */
+const saved=localStorage.getItem("iphoneclinic_data")
+if(saved){data=JSON.parse(saved)}
+
+/* MARCAR MODELO ACTIVO */
+function setActiveModel(btn){
+ document.querySelectorAll('.modelBtn').forEach(el=>el.classList.remove('active'))
+ if(btn) btn.classList.add('active')
 }
 
-function loadSelect() {
-    selectElement.innerHTML = '<option value="">Seleccionar modelo manualmente...</option>';
-    Object.keys(data).forEach(model => {
-        const o = document.createElement("option");
-        o.value = model;
-        o.textContent = model.toUpperCase();
-        selectElement.appendChild(o);
-    });
+/* MOSTRAR MODELO */
+function showModel(model){
+ selectedModel=model
+ select.value=model
+ update()
 }
 
-selectElement.addEventListener("change", () => {
-    selectedModel = selectElement.value;
-    updateUI();
-});
-
-// Buscador mejorado
-document.getElementById("search").addEventListener("input", (e) => {
-    const q = e.target.value.toLowerCase();
-    if(q.length < 2) return;
-
-    Object.keys(data).forEach(model => {
-        if(q.includes(model.replace("iphone ", ""))) {
-            selectedModel = model;
-            selectElement.value = model;
-        }
-    });
-
-    if(q.includes("panta") || q.includes("screen")) setRepair("pantalla");
-    if(q.includes("bat") || q.includes("condicion")) setRepair("bateria");
-    
-    updateUI();
-});
-
-function setRepair(type) {
-    selectedRepair = type;
-    document.querySelectorAll(".repairBtn").forEach(b => b.classList.remove("active"));
-    const btn = document.querySelector(`[data-type="${type}"]`);
-    if(btn) btn.classList.add("active");
-    updateUI();
+/* BOTONES (FILTRADOS 11 AL 15) */
+function loadButtons(){
+ buttons.innerHTML=""
+ Object.keys(data).forEach(model=>{
+  // Filtro: Solo incluir modelos que contengan 11, 12, 13, 14 o 15
+  if(model.match(/11|12|13|14|15/)){
+    const b=document.createElement("button")
+    b.className="modelBtn"
+    b.textContent=model.toUpperCase()
+    b.onclick=()=>{setActiveModel(b);showModel(model)}
+    buttons.appendChild(b)
+  }
+ })
 }
 
-function updateUI() {
-    if(!selectedModel || !selectedRepair) return;
-
-    // Actualizar estado de botones de modelo
-    document.querySelectorAll('.modelBtn').forEach(btn => {
-        btn.classList.toggle('active', btn.textContent.toLowerCase() === selectedModel.toLowerCase());
-    });
-
-    const price = data[selectedModel][selectedRepair];
-    let titulo = selectedRepair === "pantalla" ? "Cambio de Pantalla" : "Cambio de Batería";
-    let extra = selectedRepair === "bateria" ? "Batería marca Mechanic – Condición 100%" : "Repuesto Calidad Original";
-
-    const mensaje = `${selectedModel.toUpperCase()}\n\n${titulo}\nPrecio: ${format(price)}\n${extra}\nTiempo de reparación: 30 a 45 minutos\n${garantia}`;
-
-    resultsContainer.innerHTML = `
-        <div class="card">
-            <h2 style="margin-top:0">${selectedModel.toUpperCase()}</h2>
-            <div style="color:var(--accent); font-weight:600">${titulo}</div>
-            <div class="price">${format(price)}</div>
-            <div style="margin-bottom:15px; font-size:14px; color:var(--sub)">${extra}</div>
-            <div class="row"><div class="label">Garantía</div><div>Incluida</div></div>
-            <div class="copyBox" id="msg">${mensaje}</div>
-            <div class="actions">
-                <button class="primary" onclick="copyMsg()">Copiar Texto</button>
-                <button class="secondary" onclick="sendWhats()">WhatsApp</button>
-            </div>
-        </div>
-    `;
-    
-    registerStat(selectedModel, selectedRepair);
+/* SELECT */
+function loadSelect(){
+ select.innerHTML='<option value="">Seleccionar modelo...</option>'
+ Object.keys(data).forEach(model=>{
+ const o=document.createElement("option")
+ o.value=model
+ o.textContent=model.toUpperCase()
+ select.appendChild(o)
+ })
 }
 
-function format(num) {
-    return "$" + Number(num).toLocaleString('es-CL');
+select.addEventListener("change",()=>{
+ selectedModel=select.value
+ setActiveModel(null) // Quita el active de los botones si se usa el select
+ update()
+})
+
+/* BUSQUEDA */
+const search=document.getElementById("search")
+search.addEventListener("input",()=>{
+ const q=search.value.toLowerCase()
+ Object.keys(data).forEach(model=>{
+ if(q.includes(model.replace("iphone ",""))) selectedModel=model
+ })
+ if(q.includes("pantalla")) setRepair("pantalla")
+ if(q.includes("bateria")) setRepair("bateria")
+ update()
+})
+
+/* SERVICIO CON TOGGLE */
+function setRepair(type){
+ if(selectedRepair===type){
+   selectedRepair=null
+   clearRepairButtons()
+   results.innerHTML=""
+   return
+ }
+
+ selectedRepair=type
+ clearRepairButtons()
+ const btn=document.querySelector(`[data-type="${type}"]`)
+ if(btn)btn.classList.add("active")
+ update()
 }
 
-function copyMsg() {
-    const text = document.getElementById("msg").innerText;
-    navigator.clipboard.writeText(text).then(() => alert("Copiado al portapapeles"));
+function clearRepairButtons(){
+ document.querySelectorAll(".repairBtn").forEach(b=>b.classList.remove("active"))
 }
 
-function sendWhats() {
-    const text = document.getElementById("msg").innerText;
-    window.open("https://wa.me/?text=" + encodeURIComponent(text), '_blank');
+/* UPDATE */
+function update(){
+ if(!selectedModel||!selectedRepair){
+  results.innerHTML = "";
+  return;
+ }
+
+ const price=data[selectedModel][selectedRepair]
+ let titulo=""
+ let extra=""
+
+ if(selectedRepair==="pantalla"){
+ titulo="Cambio de Pantalla"
+ }
+
+ if(selectedRepair==="bateria"){
+ titulo="Cambio de Batería"
+ extra="Batería marca Mechanic – Condición 100%"
+ }
+
+ results.innerHTML=`
+ <div class="card">
+ <h2>${selectedModel.toUpperCase()}</h2>
+ <div>${titulo}</div>
+ <div class="price">${format(price)}</div>
+ <div>${extra}</div>
+ <div class="row">
+ <div class="label">Garantía</div>
+ <div>${garantia}</div>
+ </div>
+ <div class="copyBox" id="msg">${selectedModel.toUpperCase()}\n\n${titulo}\nPrecio: ${format(price)}\n${extra}\nTiempo de reparación: 30 a 45 minutos\n${garantia}</div>
+ <div class="actions">
+ <button class="primary" onclick="copyMsg()">Copiar respuesta</button>
+ <button class="secondary" onclick="sendWhats()">Enviar WhatsApp</button>
+ </div>
+ </div>
+ `
 }
 
-/* ADMIN LOGIC */
-function toggleAdminLogin() {
-    const pass = prompt("Contraseña admin");
-    if(pass !== "admin123") return alert("Incorrecto");
-    
-    admin = !admin;
-    document.getElementById("adminPanel").classList.toggle("hidden", !admin);
-    if(admin) loadAdminTable();
+/* COPY ORDENADO */
+function copyMsg(){
+ const msgElement = document.getElementById("msg");
+ // Se utiliza innerText para preservar los saltos de línea de white-space: pre-line
+ const text = msgElement.innerText || msgElement.textContent;
+ 
+ navigator.clipboard.writeText(text).then(() => {
+    alert("Mensaje copiado correctamente");
+ }).catch(err => {
+    console.error('Error al copiar: ', err);
+ });
 }
 
-function loadAdminTable() {
-    const tbody = document.querySelector("#adminTable tbody");
-    tbody.innerHTML = "";
-    Object.keys(data).forEach(model => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${model}</td>
-            <td><input type="number" value="${data[model].pantalla}" onchange="data['${model}'].pantalla=Number(this.value)"></td>
-            <td><input type="number" value="${data[model].bateria}" onchange="data['${model}'].bateria=Number(this.value)"></td>
-            <td><button class="danger" onclick="deleteModel('${model}')">Eliminar</button></td>
-        `;
-        tbody.appendChild(tr);
-    });
+function sendWhats(){
+ const text=document.getElementById("msg").innerText
+ const url="https://wa.me/?text="+encodeURIComponent(text)
+ window.open(url,'_blank')
 }
 
-function addModel() {
-    const name = prompt("Nombre del modelo (ej: iphone 16)");
-    if(!name || data[name.toLowerCase()]) return;
-    data[name.toLowerCase()] = {pantalla: 0, bateria: 0};
-    loadAdminTable();
-    loadButtons();
-    loadSelect();
+/* ADMIN */
+function toggleAdminLogin(){
+ if(admin) return; // Si ya está logueado no hace nada
+ const pass=prompt("Contraseña admin")
+ if(pass!=="admin123"){
+ alert("Incorrecto")
+ return
+ }
+ admin=true
+ const panel=document.getElementById("adminPanel")
+ panel.classList.remove("hidden")
+ loadAdminTable()
+ renderAdminButtons()
 }
 
-function deleteModel(model) {
-    if(confirm(`¿Eliminar ${model}?`)) {
-        delete data[model];
-        loadAdminTable();
-        loadButtons();
-        loadSelect();
-    }
+function logoutAdmin(){
+    admin = false;
+    document.getElementById("adminPanel").classList.add("hidden");
+    renderAdminButtons();
 }
 
-function saveData() {
-    localStorage.setItem("iphoneclinic_data", JSON.stringify(data));
-    alert("Datos guardados en este navegador");
+function loadAdminTable(){
+ const tbody=document.querySelector("#adminTable tbody")
+ tbody.innerHTML=""
+ Object.keys(data).forEach(model=>{
+ const tr=document.createElement("tr")
+ tr.innerHTML=`
+ <td>${model}</td>
+ <td><input type="number" value="${data[model].pantalla}" onchange="data['${model}'].pantalla=Number(this.value)"></td>
+ <td><input type="number" value="${data[model].bateria}" onchange="data['${model}'].bateria=Number(this.value)"></td>
+ <td><button class="danger" onclick="deleteModel('${model}')">X</button></td>
+ `
+ tbody.appendChild(tr)
+ })
 }
 
-function registerStat(model, repair) {
-    const key = `${model}-${repair}`;
-    statsData[key] = (statsData[key] || 0) + 1;
+function addModel(){
+ const name=prompt("Nuevo modelo")
+ if(!name)return
+ if(data[name]){alert("Ya existe");return}
+ data[name]={pantalla:0,bateria:0}
+ loadAdminTable()
+ loadSelect()
+ loadButtons()
 }
 
-// Inicialización
-loadButtons();
-loadSelect();
+function deleteModel(model){
+ if(!confirm("Eliminar modelo?"))return
+ delete data[model]
+ loadAdminTable()
+ loadSelect()
+ loadButtons()
+}
+
+function saveData(){
+ localStorage.setItem("iphoneclinic_data",JSON.stringify(data))
+ alert("Cambios guardados")
+}
+
+function format(num){
+ return "$"+Number(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.')
+}
+
+function renderAdminButtons(){
+ const header=document.getElementById("headerButtons")
+ const adminBtn=document.getElementById("adminBtn")
+ const statsBtn=document.getElementById("adminStatsBtn")
+ const clients=document.getElementById("adminClientsBtn")
+ if(statsBtn)statsBtn.remove()
+ if(clients)clients.remove()
+
+ if(admin){
+ adminBtn.classList.add("hidden")
+ const s=document.createElement("button")
+ s.id="adminStatsBtn"
+ s.className="secondary"
+ s.textContent="Estadísticas"
+ s.onclick=openStats
+
+ const c=document.createElement("button")
+ c.id="adminClientsBtn"
+ c.className="secondary"
+ c.textContent="Clientes"
+ c.onclick=openClients
+
+ header.appendChild(s)
+ header.appendChild(c)
+ } else {
+    adminBtn.classList.remove("hidden")
+ }
+}
+
+/* CLIENTES Y ESTADISTICAS (Mantenidos) */
+let clients=[]
+function openClients(){
+ let html='<div class="card"><h2>Clientes</h2>'
+ clients.forEach(c=>{
+ html+=`<div class="row"><div>${c.name}</div><div>${c.phone}</div></div>`
+ })
+ html+='</div>'
+ results.innerHTML=html
+}
+
+let statsData={}
+function registerStat(model,repair){
+ const key=model+"-"+repair
+ if(!statsData[key])statsData[key]=0
+ statsData[key]++
+}
+
+function openStats(){
+ let html='<div class="card"><h2>Estadísticas</h2>'
+ Object.keys(statsData).forEach(k=>{
+ html+=`<div class="row"><div>${k}</div><div>${statsData[k]}</div></div>`
+ })
+ html+='</div>'
+ results.innerHTML=html
+}
+
+// Copyright año actual
+document.getElementById("year").textContent = new Date().getFullYear();
+
+/* INIT */
+loadButtons()
+loadSelect()
+
 </script>
 
 </body>
