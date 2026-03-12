@@ -6,7 +6,6 @@
 <title>iPhoneClinic – Management System</title>
 
 <style>
-/* VARIABLES DE COLOR */
 :root {
     --primary: #007aff;
     --bg: #f2f2f7;
@@ -17,7 +16,6 @@
     --shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
-/* CONFIGURACIÓN MODO OSCURO */
 body.dark-mode {
     --bg: #000000;
     --card: #1c1c1e;
@@ -54,6 +52,17 @@ header {
 
 h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
 
+/* EL DISTINTIVO PRO AZUL */
+.badge { 
+    background: var(--primary); 
+    color: white; 
+    padding: 4px 10px; 
+    border-radius: 8px; 
+    font-size: 12px; 
+    vertical-align: middle; 
+    margin-left: 5px;
+}
+
 .search-input {
     width: 100%;
     padding: 18px 25px;
@@ -65,7 +74,9 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
     color: var(--text-main);
     box-sizing: border-box;
     margin-bottom: 25px;
+    outline: none;
 }
+.search-input:focus { border-color: var(--primary); }
 
 .shortcuts-label { font-size: 13px; color: var(--text-sub); margin-bottom: 10px; font-weight: 600; text-transform: uppercase; }
 .shortcuts-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px; }
@@ -101,6 +112,7 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
     cursor: pointer;
     border: 2px solid transparent;
     box-shadow: var(--shadow);
+    color: var(--text-main);
 }
 .repair-card.active { border-color: var(--primary); background: rgba(0, 114, 243, 0.1); }
 
@@ -148,8 +160,8 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
 <div class="app-container">
     <header>
         <div>
-            <h1>iPhoneClinic</h1>
-            <div style="color: var(--text-sub); font-size: 12px;">Cotizador PRO v6</div>
+            <h1>iPhoneClinic <span class="badge">PRO</span></h1>
+            <div style="color: var(--text-sub); font-size: 12px;">Cotizador Central v6</div>
         </div>
         <div style="display: flex; gap: 8px;">
             <button class="btn-secondary" onclick="toggleDarkMode()" style="padding: 8px 12px;">🌓 Modo</button>
@@ -157,7 +169,7 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
         </div>
     </header>
 
-    <input type="text" class="search-input" id="mainSearch" placeholder="Busca un modelo o falla...">
+    <input type="text" class="search-input" id="mainSearch" placeholder="Ej: 13 pantalla o 15 bateria...">
 
     <div class="shortcuts-label">Shortcuts Inteligent</div>
     <div class="shortcuts-grid" id="shortcuts"></div>
@@ -219,7 +231,7 @@ const garantia = "Garantía por servicio y falla de fábrica.";
 const saved = localStorage.getItem("clinic_pro_data");
 if(saved) data = JSON.parse(saved);
 
-// SHORTCUTS (SOLO 11, 12, 13, 14, 15)
+// SHORTCUTS CON NOMBRE "iPhone X"
 function initShortcuts() {
     const container = document.getElementById("shortcuts");
     container.innerHTML = "";
@@ -227,7 +239,7 @@ function initShortcuts() {
     list.forEach(m => {
         const btn = document.createElement("button");
         btn.className = "shortcut-btn";
-        btn.textContent = m.replace("iphone ", "").toUpperCase();
+        btn.textContent = m.toUpperCase(); // Ahora dice IPHONE 11, etc.
         btn.onclick = () => selectModel(m, btn);
         container.appendChild(btn);
     });
@@ -253,7 +265,6 @@ function selectModel(m, btn) {
 }
 
 function handleRepairClick(type) {
-    // Si ya está seleccionado, lo oculta (Toggle)
     if(activeRepair === type) {
         activeRepair = null;
         document.getElementById(`btn-${type}`).classList.remove("active");
@@ -273,17 +284,14 @@ function render() {
     const title = activeRepair === "pantalla" ? "Cambio de Pantalla" : "Cambio de Batería";
     const extra = activeRepair === "bateria" ? "Batería marca Mechanic – Condición 100%" : "Repuesto Calidad Original";
 
-    // Texto para visualización
-    const fullMessage = `${activeModel.toUpperCase()}\n\n${title}\nPrecio: ${formatMoney(price)}\n${extra}\nTiempo: 30-45 min\n${garantia}`;
+    const fullMsg = `${activeModel.toUpperCase()}\n\n${title}\nPrecio: ${formatMoney(price)}\n${extra}\nTiempo: 30-45 min\n${garantia}`;
 
     area.innerHTML = `
         <div class="result-card">
             <div style="font-weight:700; font-size:18px;">${activeModel.toUpperCase()}</div>
             <div style="color:var(--text-sub)">${title}</div>
             <div class="price-tag">${formatMoney(price)}</div>
-            
-            <div class="copy-box" id="copyMsg">${fullMessage}</div>
-            
+            <div class="copy-box" id="copyMsg">${fullMsg}</div>
             <div class="btn-group">
                 <button class="btn btn-primary" onclick="copyToClipboard()">Copiar Respuesta</button>
                 <button class="btn btn-secondary" onclick="openWA()">WhatsApp</button>
@@ -294,22 +302,14 @@ function render() {
 
 function formatMoney(n) { return "$" + Number(n).toLocaleString('es-CL'); }
 
-// COPIADO ORDENADO (Solución al desorden)
 function copyToClipboard() {
     const price = formatMoney(data[activeModel][activeRepair]);
     const title = activeRepair === "pantalla" ? "Cambio de Pantalla" : "Cambio de Batería";
     const extra = activeRepair === "bateria" ? "Batería marca Mechanic – Condición 100%" : "Repuesto Calidad Original";
 
-    // Se construye la cadena manualmente para asegurar el orden al pegar
-    const textToCopy = 
-        activeModel.toUpperCase() + "\n\n" +
-        title + "\n" +
-        "Precio: " + price + "\n" +
-        extra + "\n" +
-        "Tiempo de reparación: 30 a 45 minutos\n" +
-        garantia;
+    const text = activeModel.toUpperCase() + "\n\n" + title + "\n" + "Precio: " + price + "\n" + extra + "\n" + "Tiempo de reparación: 30 a 45 minutos\n" + garantia;
 
-    navigator.clipboard.writeText(textToCopy).then(() => alert("Respuesta copiada satisfactoriamente"));
+    navigator.clipboard.writeText(text).then(() => alert("Copiado satisfactoriamente"));
 }
 
 function openWA() {
@@ -317,55 +317,58 @@ function openWA() {
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
 }
 
-function toggleDarkMode() {
-    document.getElementById("mainBody").classList.toggle("dark-mode");
-}
+function toggleDarkMode() { document.getElementById("mainBody").classList.toggle("dark-mode"); }
 
 function loginAdmin() {
     if(prompt("Password:") === "admin123") {
         document.getElementById("adminPanel").classList.remove("hidden");
         renderAdmin();
-    } else { alert("Acceso denegado"); }
+    }
 }
 
-function logoutAdmin() {
-    document.getElementById("adminPanel").classList.add("hidden");
-}
+function logoutAdmin() { document.getElementById("adminPanel").classList.add("hidden"); }
 
 function renderAdmin() {
     const body = document.getElementById("adminBody");
     body.innerHTML = "";
-    Object.keys(data).forEach(m => {
+    Object.keys(data).sort().forEach(m => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td><strong>${m.toUpperCase()}</strong></td>
-            <td>Pantalla: <input type="number" value="${data[m].pantalla}" onchange="data['${m}'].pantalla=Number(this.value)"></td>
-            <td>Batería: <input type="number" value="${data[m].bateria}" onchange="data['${m}'].bateria=Number(this.value)"></td>
-            <td><button class="btn-danger" style="padding:5px 10px" onclick="deleteModel('${m}')">Eliminar</button></td>
-        `;
+        tr.innerHTML = `<td><strong>${m.toUpperCase()}</strong></td>
+            <td><input type="number" value="${data[m].pantalla}" onchange="data['${m}'].pantalla=Number(this.value)"></td>
+            <td><input type="number" value="${data[m].bateria}" onchange="data['${m}'].bateria=Number(this.value)"></td>`;
         body.appendChild(tr);
     });
 }
 
-function addNewModel() {
-    const n = prompt("Nombre del modelo:");
-    if(n) { data[n.toLowerCase()] = {pantalla:0, bateria:0}; renderAdmin(); initSelect(); }
-}
+function persistData() { localStorage.setItem("clinic_pro_data", JSON.stringify(data)); alert("Guardado."); }
 
-function deleteModel(m) {
-    if(confirm("¿Eliminar " + m + "?")) { delete data[m]; renderAdmin(); initSelect(); }
-}
-
-function persistData() { 
-    localStorage.setItem("clinic_pro_data", JSON.stringify(data)); 
-    alert("Datos actualizados localmente."); 
-}
-
+// BUSCADOR MEJORADO E INMEDIATO
 document.getElementById("mainSearch").addEventListener("input", (e) => {
-    const val = e.target.value.toLowerCase();
-    Object.keys(data).forEach(m => { if(val.includes(m.replace("iphone ",""))) activeModel = m; });
-    if(val.includes("panta")) activeRepair = "pantalla";
-    if(val.includes("bat")) activeRepair = "bateria";
+    const val = e.target.value.toLowerCase().trim();
+    if(val === "") return;
+
+    // Buscar modelo
+    Object.keys(data).forEach(m => {
+        const simpleModel = m.replace("iphone ", "");
+        // Si el usuario escribe "13" y el modelo es "iphone 13"
+        if(val.includes(simpleModel) && simpleModel.length > 1) {
+            activeModel = m;
+            document.getElementById("modelSelect").value = m;
+        }
+    });
+
+    // Buscar falla
+    if(val.includes("pan") || val.includes("screen")) {
+        activeRepair = "pantalla";
+        document.querySelectorAll(".repair-card").forEach(c => c.classList.remove("active"));
+        document.getElementById("btn-pantalla").classList.add("active");
+    } 
+    else if(val.includes("bat")) {
+        activeRepair = "bateria";
+        document.querySelectorAll(".repair-card").forEach(c => c.classList.remove("active"));
+        document.getElementById("btn-bateria").classList.add("active");
+    }
+
     render();
 });
 
