@@ -247,7 +247,7 @@ function setRepair(type){
  selectedRepair=type
  clearRepairButtons()
 
- const btn=document.querySelector('[data-type="${type}"]')
+ const btn=document.querySelector('[data-type="'+type+'"]')
  if(btn)btn.classList.add("active")
 
  update()
