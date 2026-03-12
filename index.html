@@ -812,6 +812,87 @@ window.addEventListener('beforeinstallprompt',e=>{
 
 /* ===== FIN VERSION 4 ULTRA ===== */
 
+
+
+/* ===== V5 SaaS MODULES ===== */
+let clients=[]
+let stats={}
+
+function autoParseQuery(q){
+ q=q.toLowerCase()
+ const mapModels={"7":"iphone 7","8":"iphone 8","x":"iphone x","xr":"iphone xr","xs":"iphone xs","11":"iphone 11","12":"iphone 12","13":"iphone 13","14":"iphone 14","15":"iphone 15","16":"iphone 16","17":"iphone 17 pro max"}
+ const mapRepair={"p":"pantalla","pantalla":"pantalla","b":"bateria","bateria":"bateria"}
+ let model=null
+ let repair=null
+
+ Object.keys(mapModels).forEach(k=>{if(q.includes(k))model=mapModels[k]})
+ Object.keys(mapRepair).forEach(k=>{if(q.includes(k))repair=mapRepair[k]})
+
+ if(model && repair){
+  selectedRepair=repair
+  showModel(model)
+ }
+}
+
+search.addEventListener('keydown',e=>{
+ if(e.key==='Enter'){
+  autoParseQuery(search.value)
+ }
+})
+
+function registerStat(model,repair){
+ const key=model+"-"+repair
+ if(!stats[key])stats[key]=0
+ stats[key]++
+}
+
+const oldShowModel=showModel
+showModel=function(model){
+ registerStat(model,selectedRepair)
+ oldShowModel(model)
+}
+
+function openStats(){
+ if(!admin)return
+ let html='<div class="card"><h2>Estadísticas</h2>'
+ Object.keys(stats).forEach(k=>{
+  html+=`<div class="row"><div>${k}</div><div>${stats[k]}</div></div>`
+ })
+ html+='</div>'
+ results.innerHTML=html
+}
+
+function saveClient(name,phone){
+ clients.push({name,phone,date:new Date().toLocaleDateString()})
+}
+
+function openClients(){
+ if(!admin)return
+ let html='<div class="card"><h2>Clientes</h2>'
+ clients.forEach(c=>{
+  html+=`<div class="row"><div>${c.name}</div><div>${c.phone}</div></div>`
+ })
+ html+='</div>'
+ results.innerHTML=html
+}
+
+const header=document.querySelector('header div:last-child')
+if(header){
+ const statsBtn=document.createElement('button')
+ statsBtn.className='secondary'
+ statsBtn.innerText='Estadísticas'
+ statsBtn.onclick=openStats
+ header.appendChild(statsBtn)
+
+ const clientsBtn=document.createElement('button')
+ clientsBtn.className='secondary'
+ clientsBtn.innerText='Clientes'
+ clientsBtn.onclick=openClients
+ header.appendChild(clientsBtn)
+}
+
+/* ===== END SaaS MODULES ===== */
+
 </script>
 
 </body>
