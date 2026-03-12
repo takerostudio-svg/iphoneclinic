@@ -32,7 +32,6 @@ body {
     padding: 0 20px;
 }
 
-/* HEADER ESTILO DASHBOARD */
 header {
     background: white;
     padding: 25px;
@@ -47,7 +46,6 @@ header {
 h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
 .badge { background: var(--primary); color: white; padding: 4px 10px; border-radius: 8px; font-size: 12px; vertical-align: middle; }
 
-/* BUSCADOR PRO */
 .search-wrapper { position: relative; margin-bottom: 25px; }
 .search-input {
     width: 100%;
@@ -62,7 +60,6 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
 }
 .search-input:focus { border-color: var(--primary); outline: none; }
 
-/* ACCESOS DIRECTOS (FILTRADOS 11-15) */
 .shortcuts-label { font-size: 13px; color: var(--text-sub); margin-bottom: 10px; font-weight: 600; text-transform: uppercase; }
 .shortcuts-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px; }
 .shortcut-btn {
@@ -76,7 +73,6 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
 }
 .shortcut-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-/* SELECTOR SECUNDARIO */
 .custom-select {
     width: 100%;
     padding: 12px;
@@ -86,7 +82,6 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
     background: white;
 }
 
-/* BOTONES DE REPARACIÓN */
 .repair-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
 .repair-card {
     background: white;
@@ -99,9 +94,7 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
     transition: 0.3s;
 }
 .repair-card.active { border-color: var(--primary); background: #f0f7ff; }
-.repair-card i { display: block; font-size: 24px; margin-bottom: 8px; }
 
-/* TARJETA DE RESULTADOS */
 .result-card {
     background: white;
     border-radius: 24px;
@@ -115,7 +108,18 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
 .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f2f2f7; }
 .info-label { color: var(--text-sub); }
 
-/* BOTONES ACCION */
+/* CUADRO DE TEXTO PARA COPIAR (RESTAURADO) */
+.copy-box {
+    margin-top: 25px;
+    background: #f9f9fb;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 14px;
+    white-space: pre-line;
+    border: 1px dashed var(--primary);
+    color: #444;
+}
+
 .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 25px; }
 .btn {
     padding: 15px;
@@ -129,7 +133,6 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
 .btn-secondary { background: #e5e5ea; color: var(--text-main); }
 .btn-danger { background: var(--danger); color: white; }
 
-/* ADMIN PANEL */
 .admin-section {
     background: white;
     margin-top: 40px;
@@ -154,7 +157,9 @@ h1 { margin: 0; font-size: 24px; letter-spacing: -0.5px; }
             <h1>iPhoneClinic <span class="badge">PRO</span></h1>
             <div style="color: var(--text-sub); font-size: 13px;">Sistema de Cotización Central</div>
         </div>
-        <button class="btn-secondary" id="adminAccessBtn" onclick="loginAdmin()">Admin</button>
+        <div id="headerActions">
+            <button class="btn-secondary" id="adminAccessBtn" onclick="loginAdmin()">Admin</button>
+        </div>
     </header>
 
     <div class="search-wrapper">
@@ -223,16 +228,15 @@ let activeModel = null;
 let activeRepair = null;
 const garantia = "Garantía por servicio y falla de fábrica.";
 
-// Cargar Local Storage
-const local = localStorage.getItem("clinic_pro_data");
-if(local) data = JSON.parse(local);
+const saved = localStorage.getItem("clinic_pro_data");
+if(saved) data = JSON.parse(saved);
 
-// Inicializar Accesos Directos 11-15
+// SHORTCUTS FILTRADOS (Solo 11 al 15)
 function initShortcuts() {
     const container = document.getElementById("shortcuts");
     container.innerHTML = "";
     Object.keys(data).forEach(m => {
-        if(m.match(/11|12|13|14|15/)) {
+        if(m.match(/iphone 11|iphone 12|iphone 13|iphone 14|iphone 15/i)) {
             const btn = document.createElement("button");
             btn.className = "shortcut-btn";
             btn.textContent = m.toUpperCase();
@@ -242,7 +246,6 @@ function initShortcuts() {
     });
 }
 
-// Inicializar Select
 function initSelect() {
     const sel = document.getElementById("modelSelect");
     sel.innerHTML = '<option value="">Ver todos los modelos...</option>';
@@ -262,7 +265,6 @@ function selectModel(m, btnElement) {
     renderResult();
 }
 
-// Toggle Reparación (Oculta si se vuelve a apretar)
 function toggleRepair(type) {
     if(activeRepair === type) {
         activeRepair = null;
@@ -284,7 +286,10 @@ function renderResult() {
 
     const price = data[activeModel][activeRepair];
     const title = activeRepair === "pantalla" ? "Cambio de Pantalla" : "Cambio de Batería";
-    const extra = activeRepair === "bateria" ? "Batería marca Mechanic – Condición 100%" : "Repuesto Premium";
+    const extra = activeRepair === "bateria" ? "Batería marca Mechanic – Condición 100%" : "Repuesto Calidad Original";
+
+    // FORMATO DE COPIADO RESTAURADO
+    const fullMessage = `${activeModel.toUpperCase()}\n\n${title}\nPrecio: ${formatMoney(price)}\n${extra}\nTiempo de reparación: 30 a 45 minutos\n${garantia}`;
 
     area.innerHTML = `
         <div class="result-card">
@@ -293,7 +298,8 @@ function renderResult() {
             <div class="price-tag">${formatMoney(price)}</div>
             <div class="info-row"><span class="info-label">Tiempo</span><span>30 - 45 min</span></div>
             <div class="info-row"><span class="info-label">Garantía</span><span>${garantia}</span></div>
-            <div style="margin-top:15px; font-size: 13px; color: var(--text-sub)">${extra}</div>
+            
+            <div class="copy-box" id="copyMsg">${fullMessage}</div>
             
             <div class="btn-group">
                 <button class="btn btn-primary" onclick="copyToClipboard()">Copiar Respuesta</button>
@@ -304,28 +310,19 @@ function renderResult() {
 }
 
 function formatMoney(n) {
-    return "$" + Number(n).toLocaleString('es-CL');
+    return "$" + Number(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
 }
 
-// Copiado Ordenado
 function copyToClipboard() {
-    const title = activeRepair === "pantalla" ? "Cambio de Pantalla" : "Cambio de Batería";
-    const price = formatMoney(data[activeModel][activeRepair]);
-    const extra = activeRepair === "bateria" ? "\nBatería marca Mechanic – Condición 100%" : "";
-
-    const text = `${activeModel.toUpperCase()}\n\n${title}\nPrecio: ${price}${extra}\nTiempo de reparación: 30 a 45 minutos\n${garantia}`;
-    
-    navigator.clipboard.writeText(text).then(() => alert("Respuesta copiada satisfactoriamente"));
+    const text = document.getElementById("copyMsg").innerText;
+    navigator.clipboard.writeText(text).then(() => alert("Copiado con éxito"));
 }
 
 function openWA() {
-    const title = activeRepair === "pantalla" ? "Cambio de Pantalla" : "Cambio de Batería";
-    const price = formatMoney(data[activeModel][activeRepair]);
-    const text = `${activeModel.toUpperCase()}%0A%0A${title}%0APrecio: ${price}%0ATiempo: 30-45 min%0A${garantia}`;
-    window.open(`https://wa.me/?text=${text}`, '_blank');
+    const text = document.getElementById("copyMsg").innerText;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
 }
 
-// Admin Logic
 function loginAdmin() {
     const p = prompt("Password:");
     if(p === "admin123") {
@@ -376,10 +373,9 @@ function deleteM(m) {
 
 function persistData() {
     localStorage.setItem("clinic_pro_data", JSON.stringify(data));
-    alert("Datos sincronizados.");
+    alert("Cambios guardados.");
 }
 
-// Buscador dinámico
 document.getElementById("mainSearch").addEventListener("input", (e) => {
     const val = e.target.value.toLowerCase();
     Object.keys(data).forEach(m => {
@@ -393,7 +389,6 @@ document.getElementById("mainSearch").addEventListener("input", (e) => {
 document.getElementById("modelSelect").onchange = (e) => selectModel(e.target.value);
 document.getElementById("currentYear").textContent = new Date().getFullYear();
 
-// Init
 initShortcuts();
 initSelect();
 </script>
