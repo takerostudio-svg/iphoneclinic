@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iPhoneClinic – v6 PRO</title>
+
+<style>
+:root{
+--bg:#f5f5f7;
+--card:#ffffff;
+--text:#1d1d1f;
+--sub:#6e6e73;
+--border:#d2d2d7;
+--accent:#0071e3;
+}
+
+body{
+font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+background:var(--bg);
+margin:0;
+color:var(--text);
+}
+
+.container{max-width:1100px;margin:auto;padding:40px 20px}
+
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+
+h1{margin:0;font-size:32px}
+.subtitle{color:var(--sub)}
+
+button{cursor:pointer;border:none;padding:10px 16px;border-radius:10px;font-size:14px}
+.primary{background:var(--accent);color:white}
+.secondary{background:#e5e5ea}
+.danger{background:#ff3b30;color:white}
+
+.search{width:100%;padding:18px;font-size:20px;border-radius:14px;border:1px solid var(--border);margin:20px 0}
+
+.models{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px}
+.modelBtn{background:var(--card);border:1px solid var(--border);padding:8px 12px;border-radius:10px;font-size:13px}
+.modelBtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.modelSelect{margin-bottom:20px;padding:10px;border-radius:10px;border:1px solid var(--border)}
+
+.repairs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:25px}
+.repairBtn{background:#efeff1;border:none;padding:8px 12px;border-radius:10px;font-size:13px}
+.repairBtn.active{background:var(--accent);color:white}
+
+.card{background:var(--card);border-radius:18px;padding:24px;box-shadow:0 6px 25px rgba(0,0,0,0.08)}
+
+.price{font-size:46px;font-weight:700;margin:10px 0}
+
+.row{display:flex;justify-content:space-between;margin:6px 0}
+.label{color:var(--sub)}
+
+.copyBox{margin-top:20px;background:rgba(0,0,0,0.05);padding:15px;border-radius:10px;font-size:14px;white-space:pre-line}
+
+.actions{margin-top:15px;display:flex;gap:10px}
+
+.footer{margin-top:40px;color:var(--sub);font-size:14px}
+
+.adminPanel{margin-top:40px;background:white;padding:25px;border-radius:18px;box-shadow:0 6px 25px rgba(0,0,0,0.08)}
+
+.table{width:100%;border-collapse:collapse;margin-top:15px}
+.table th,.table td{border-bottom:1px solid #eee;padding:10px;text-align:left}
+.table input{width:90px;padding:6px}
+
+.hidden{display:none}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+<div>
+<h1>iPhoneClinic</h1>
+<div class="subtitle">Cotizador PRO</div>
+</div>
+
+<div id="headerButtons">
+<button class="secondary" onclick="toggleAdminLogin()">Panel Admin</button>
+</div>
+</header>
+
+<input class="search" id="search" placeholder="Ej: 13 pro pantalla">
+
+<div class="models" id="modelButtons"></div>
+
+<select class="modelSelect" id="modelSelect"></select>
+
+<div class="repairs">
+<button class="repairBtn" data-type="pantalla" onclick="setRepair('pantalla')">Pantalla</button>
+<button class="repairBtn" data-type="bateria" onclick="setRepair('bateria')">Batería</button>
+</div>
+
+<div id="results"></div>
+
+<div id="adminPanel" class="adminPanel hidden">
+
+<h2>Panel de Administración</h2>
+
+<div style="margin-bottom:15px">
+<button class="primary" onclick="addModel()">Agregar modelo</button>
+<button class="secondary" onclick="saveData()">Guardar cambios</button>
+</div>
+
+<table class="table" id="adminTable">
+<thead>
+<tr>
+<th>Modelo</th>
+<th>Pantalla</th>
+<th>Batería</th>
+<th></th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+</div>
+
+<div class="footer">Sistema interno iPhoneClinic</div>
+
+</div>
+
+<script>
+
+let selectedRepair=null
+let selectedModel=null
+let admin=false
+
+let data={
+"iphone 7":{pantalla:35000,bateria:25000},
+"iphone 7 plus":{pantalla:38000,bateria:25000},
+"iphone 8":{pantalla:38000,bateria:25000},
+"iphone 8 plus":{pantalla:42000,bateria:27000},
+"iphone x":{pantalla:55000,bateria:30000},
+"iphone xs":{pantalla:60000,bateria:32000},
+"iphone xs max":{pantalla:65000,bateria:35000},
+"iphone xr":{pantalla:60000,bateria:32000},
+"iphone 11":{pantalla:70000,bateria:40000},
+"iphone 11 pro":{pantalla:90000,bateria:42000},
+"iphone 11 pro max":{pantalla:95000,bateria:42000},
+"iphone 12":{pantalla:95000,bateria:45000},
+"iphone 12 mini":{pantalla:95000,bateria:45000},
+"iphone 12 pro":{pantalla:110000,bateria:45000},
+"iphone 12 pro max":{pantalla:120000,bateria:48000},
+"iphone 13":{pantalla:85000,bateria:45000},
+"iphone 13 mini":{pantalla:85000,bateria:45000},
+"iphone 13 pro":{pantalla:120000,bateria:50000},
+"iphone 13 pro max":{pantalla:130000,bateria:50000},
+"iphone 14":{pantalla:110000,bateria:50000},
+"iphone 14 plus":{pantalla:120000,bateria:52000},
+"iphone 14 pro":{pantalla:150000,bateria:55000},
+"iphone 14 pro max":{pantalla:160000,bateria:55000},
+"iphone 15":{pantalla:140000,bateria:55000},
+"iphone 15 plus":{pantalla:150000,bateria:58000},
+"iphone 15 pro":{pantalla:180000,bateria:60000},
+"iphone 15 pro max":{pantalla:190000,bateria:60000}
+},
+"iphone 8":{pantalla:38000,bateria:25000},
+"iphone x":{pantalla:55000,bateria:30000},
+"iphone xr":{pantalla:60000,bateria:32000},
+"iphone 11":{pantalla:70000,bateria:40000},
+"iphone 12":{pantalla:95000,bateria:45000},
+"iphone 13":{pantalla:85000,bateria:45000},
+"iphone 14":{pantalla:110000,bateria:50000},
+"iphone 15":{pantalla:140000,bateria:55000}
+}
+
+const garantia="Garantía por servicio y falla de fábrica."
+
+const buttons=document.getElementById("modelButtons")
+const select=document.getElementById("modelSelect")
+const results=document.getElementById("results")
+
+/* STORAGE */
+const saved=localStorage.getItem("iphoneclinic_data")
+if(saved){data=JSON.parse(saved)}
+
+/* MARCAR MODELO ACTIVO */
+function setActiveModel(btn){
+ document.querySelectorAll('.modelBtn').forEach(el=>el.classList.remove('active'))
+ btn.classList.add('active')
+}
+
+/* MOSTRAR MODELO */
+function showModel(model){
+ selectedModel=model
+ select.value=model
+ update()
+}
+
+/* BOTONES */
+function loadButtons(){
+ buttons.innerHTML=""
+ Object.keys(data).forEach(model=>{
+ const b=document.createElement("button")
+ b.className="modelBtn"
+ b.textContent=model.toUpperCase()
+ b.onclick=()=>{setActiveModel(b);showModel(model)}
+ buttons.appendChild(b)
+ })
+}
+
+/* SELECT */
+function loadSelect(){
+ select.innerHTML='<option value="">Seleccionar modelo...</option>'
+ Object.keys(data).forEach(model=>{
+ const o=document.createElement("option")
+ o.value=model
+ o.textContent=model.toUpperCase()
+ select.appendChild(o)
+ })
+}
+
+select.addEventListener("change",()=>{
+ selectedModel=select.value
+ update()
+})
+
+/* BUSQUEDA */
+const search=document.getElementById("search")
+
+search.addEventListener("input",()=>{
+ const q=search.value.toLowerCase()
+ Object.keys(data).forEach(model=>{
+ if(q.includes(model.replace("iphone ",""))) selectedModel=model
+ })
+ if(q.includes("pantalla")) setRepair("pantalla")
+ if(q.includes("bateria")) setRepair("bateria")
+ update()
+})
+
+/* SERVICIO */
+function setRepair(type){
+
+ if(selectedRepair===type){
+ selectedRepair=null
+ clearRepairButtons()
+ results.innerHTML=""
+ return
+ }
+
+ selectedRepair=type
+ clearRepairButtons()
+
+ const btn=document.querySelector(`[data-type="${type}"]`)
+ if(btn)btn.classList.add("active")
+
+ update()
+
+}
+
+function clearRepairButtons(){
+ document.querySelectorAll(".repairBtn").forEach(b=>b.classList.remove("active"))
+}
+
+/* UPDATE */
+function update(){
+
+ if(!selectedModel||!selectedRepair)return
+
+ const price=data[selectedModel][selectedRepair]
+
+ let titulo=""
+ let extra=""
+
+ if(selectedRepair==="pantalla"){
+ titulo="Cambio de Pantalla"
+ }
+
+ if(selectedRepair==="bateria"){
+ titulo="Cambio de Batería"
+ extra="Batería marca Mechanic – Condición 100%"
+ }
+
+ const mensaje=`${selectedModel.toUpperCase()}\n\n${titulo}\nPrecio: ${format(price)}\n${extra}\nTiempo de reparación: 30 a 45 minutos\n${garantia}`
+
+ results.innerHTML=`
+
+ <div class="card">
+
+ <h2>${selectedModel.toUpperCase()}</h2>
+
+ <div>${titulo}</div>
+
+ <div class="price">${format(price)}</div>
+
+ <div>${extra}</div>
+
+ <div class="row">
+ <div class="label">Garantía</div>
+ <div>${garantia}</div>
+ </div>
+
+ <div class="copyBox" id="msg">${mensaje}</div>
+
+ <div class="actions">
+ <button class="primary" onclick="copyMsg()">Copiar respuesta</button>
+ <button class="secondary" onclick="sendWhats()">Enviar WhatsApp</button>
+ </div>
+
+ </div>
+ `
+}
+
+/* COPY */
+function copyMsg(){
+ const text=document.getElementById("msg").innerText
+ navigator.clipboard.writeText(text)
+ alert("Mensaje copiado")
+}
+
+function sendWhats(){
+ const text=document.getElementById("msg").innerText
+ const url="https://wa.me/?text="+encodeURIComponent(text)
+ window.open(url,'_blank')
+}
+
+/* ADMIN */
+function toggleAdminLogin(){
+ const pass=prompt("Contraseña admin")
+ if(pass!=="admin123"){
+ alert("Incorrecto")
+ return
+ }
+ admin=!admin
+ const panel=document.getElementById("adminPanel")
+ if(admin){panel.classList.remove("hidden");loadAdminTable();renderAdminButtons()}
+ else{panel.classList.add("hidden");renderAdminButtons()}
+}
+
+function loadAdminTable(){
+
+ const tbody=document.querySelector("#adminTable tbody")
+
+ tbody.innerHTML=""
+
+ Object.keys(data).forEach(model=>{
+
+ const tr=document.createElement("tr")
+
+ tr.innerHTML=`
+ <td>${model}</td>
+ <td><input type="number" value="${data[model].pantalla}" onchange="data['${model}'].pantalla=this.value"></td>
+ <td><input type="number" value="${data[model].bateria}" onchange="data['${model}'].bateria=this.value"></td>
+ <td><button class="danger" onclick="deleteModel('${model}')">X</button></td>
+ `
+
+ tbody.appendChild(tr)
+
+ })
+
+}
+
+function addModel(){
+ const name=prompt("Nuevo modelo")
+ if(!name)return
+ if(data[name]){alert("Ya existe");return}
+ data[name]={pantalla:0,bateria:0}
+ loadAdminTable()
+ loadSelect()
+ loadButtons()
+}
+
+function deleteModel(model){
+ if(!confirm("Eliminar modelo?"))return
+ delete data[model]
+ loadAdminTable()
+ loadSelect()
+ loadButtons()
+}
+
+function saveData(){
+ localStorage.setItem("iphoneclinic_data",JSON.stringify(data))
+ alert("Cambios guardados")
+}
+
+function format(num){
+ return "$"+Number(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.')
+}
+
+/* BOTONES ADMIN HEADER */
+function renderAdminButtons(){
+ const header=document.getElementById("headerButtons")
+ const statsBtn=document.getElementById("adminStatsBtn")
+ const clients=document.getElementById("adminClientsBtn")
+ if(statsBtn)statsBtn.remove()
+ if(clients)clients.remove()
+
+ if(admin){
+ const s=document.createElement("button")
+ s.id="adminStatsBtn"
+ s.className="secondary"
+ s.textContent="Estadísticas"
+ s.onclick=openStats
+
+ const c=document.createElement("button")
+ c.id="adminClientsBtn"
+ c.className="secondary"
+ c.textContent="Clientes"
+ c.onclick=openClients
+
+ header.appendChild(s)
+ header.appendChild(c)
+ }
+}
+
+/* CLIENTES */
+let clients=[]
+
+function openClients(){
+ let html='<div class="card"><h2>Clientes</h2>'
+ clients.forEach(c=>{
+ html+=`<div class="row"><div>${c.name}</div><div>${c.phone}</div></div>`
+ })
+ html+='</div>'
+ results.innerHTML=html
+}
+
+/* ESTADISTICAS */
+let statsData={}
+
+function registerStat(model,repair){
+ const key=model+"-"+repair
+ if(!statsData[key])statsData[key]=0
+ statsData[key]++
+}
+
+function openStats(){
+ let html='<div class="card"><h2>Estadísticas</h2>'
+ Object.keys(statsData).forEach(k=>{
+ html+=`<div class="row"><div>${k}</div><div>${statsData[k]}</div></div>`
+ })
+ html+='</div>'
+ results.innerHTML=html
+}
+
+/* EXTENDER UPDATE PARA ESTADISTICAS */
+const oldUpdate=update
+update=function(){
+ oldUpdate()
+ if(selectedModel&&selectedRepair) registerStat(selectedModel,selectedRepair)
+}
+
+/* INIT */
+loadButtons()
+loadSelect()
+
+</script>
+
+</body>
+</html>
